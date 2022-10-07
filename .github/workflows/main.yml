@@ -35,7 +35,7 @@ jobs:
       - name: build chroot
         run: |
           mkdir chroot-armhf
-          sudo debootstrap --arch=armhf --variant=buildd focal http://ports.ubuntu.com/ubuntu-ports chroot-armhf
+          sudo debootstrap --arch=armhf --variant=buildd focal chroot-armhf http://ports.ubuntu.com/ubuntu-ports
           sudo mount -t proc /proc chroot-armhf/proc
           sudo mount --rbind /sys chroot-armhf/sys
           sudo mount --rbind /dev chroot-armhf/dev
