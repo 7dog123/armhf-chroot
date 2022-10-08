@@ -35,9 +35,9 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: build chroot
         run: |
-          [[ "$1" != "" ]] && debootstrap --no-check-gpg --foreign --arch armhf "$1" /armhf http://ports.ubuntu.com/ubuntu-ports || debootstrap --no-check-gpg --foreign --arch armhf focal /armhf http://ports.ubuntu.com/ubuntu-ports 
+          [[ "$1" != "" ]] && sudo debootstrap --no-check-gpg --foreign --arch armhf "$1" /armhf http://ports.ubuntu.com/ubuntu-ports || sudo debootstrap --no-check-gpg --foreign --arch armhf focal /armhf http://ports.ubuntu.com/ubuntu-ports 
           mkdir -p /amd64/main_storage
-          cat <<EOF > /usr/bin/setup_amd64
+          cat <<EOF > /usr/bin/setup_amd64 \
           #!/bin/bash \
           mount -t sysfs sys /amd64/sys/ \
           mount -t proc proc /amd64/proc/ \
