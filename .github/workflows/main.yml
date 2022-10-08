@@ -37,7 +37,7 @@ jobs:
         run: |
           [[ "$1" != "" ]] && sudo debootstrap --no-check-gpg --foreign --arch armhf "$1" /armhf http://ports.ubuntu.com/ubuntu-ports || sudo debootstrap --no-check-gpg --foreign --arch armhf focal /armhf http://ports.ubuntu.com/ubuntu-ports 
           sudo mkdir -p /amd64/main_storage
-          sudo cat <<EOF > /usr/bin/setup_amd64 \
+          sudo cat <<EOF > /usr/bin/setup_amd64
           #!/bin/bash \
           sudo mount -t sysfs sys /amd64/sys/ \
           sudo mount -t proc proc /amd64/proc/ \
@@ -58,4 +58,3 @@ jobs:
           [Install] \
           WantedBy=multi-user.target
           EOF
-
