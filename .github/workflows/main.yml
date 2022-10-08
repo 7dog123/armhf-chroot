@@ -37,26 +37,12 @@ jobs:
         run: |
           [[ "$1" != "" ]] && sudo debootstrap --no-check-gpg --foreign --arch armhf "$1" /armhf http://ports.ubuntu.com/ubuntu-ports || sudo debootstrap --no-check-gpg --foreign --arch armhf focal /armhf http://ports.ubuntu.com/ubuntu-ports 
           sudo mkdir -p /armhf/main_storage
-          cat <<EOF > setup_armhf \
-          #!/bin/bash \
-          sudo mount -t sysfs sys /armhf/sys/ \
-          sudo mount -t proc proc /armhf/proc/ \
-          sudo mount --bind /dev /armhf/dev/ \
-          sudo mount --bind /dev/pts /armhf/dev/pts/ \
-          sudo mount --bind /dev/shm /armhf dev/shm/ \
-          sudo mount --bind / /armhf/main_storage
-          EOF
-          chmod 755 setup_armhf
           mv setup_amd64 /usr/bin
-          cat <<EOF > setup_armhf.service \
-          [Unit] \
-          Description=Service to setup armhf chroot environment \
-          \
-          [Service] \
-          Type=oneshot \
-          ExecStart=/usr/bin/setup_armhf \
-          \
-          [Install] \
-          WantedBy=multi-user.target
-          EOF
           mv setup_armhf.service /etc/systemd/system/
+          systemctl start setup_armhf
+          sudo cp -r /usr/bin/arm-static /amd64/usr/bin/qemu-armhf-static
+          sudo chroot /armhf/ /debootstrap/debootstrap --second-stage
+          sudo chroot /armhf/ apt-get install locales -y
+          sed -i "/en_US\.UTF\-8 UTF\-8/ s/# *//" /armhf/etc/locale.gen
+          sudo chroot /armhf/ locale-gen
+          sudo chroot /armhf/ update-locale LANG=en_US.UTF-8

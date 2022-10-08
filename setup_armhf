@@ -1,0 +1,7 @@
+#!/bin/bash
+sudo mount -t sysfs sys /armhf/sys/
+sudo mount -t proc proc /armhf/proc/
+sudo mount --bind /dev /armhf/dev/
+sudo mount --bind /dev/pts /armhf/dev/pts/
+sudo mount --bind /dev/shm /armhf dev/shm/
+sudo mount --bind / /armhf/main_storage

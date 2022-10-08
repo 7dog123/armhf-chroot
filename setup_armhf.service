@@ -1,0 +1,9 @@
+[Unit]
+Description=Service to setup armhf chroot environment
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/setup_armhf
+
+[Install]
+WantedBy=multi-user.target
