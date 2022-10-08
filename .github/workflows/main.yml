@@ -37,7 +37,7 @@ jobs:
         run: |
           [[ "$1" != "" ]] && sudo debootstrap --no-check-gpg --foreign --arch armhf "$1" /armhf http://ports.ubuntu.com/ubuntu-ports || sudo debootstrap --no-check-gpg --foreign --arch armhf focal /armhf http://ports.ubuntu.com/ubuntu-ports 
           sudo mkdir -p /armhf/main_storage
-          cat <<EOF > setup_armhf
+          cat <<EOF > setup_armhf \
           #!/bin/bash \
           sudo mount -t sysfs sys /armhf/sys/ \
           sudo mount -t proc proc /armhf/proc/ \
@@ -48,7 +48,7 @@ jobs:
           EOF
           chmod 755 setup_armhf
           mv setup_amd64 /usr/bin
-          cat <<EOF > setup_armhf.service
+          cat <<EOF > setup_armhf.service \
           [Unit] \
           Description=Service to setup armhf chroot environment \
           \
