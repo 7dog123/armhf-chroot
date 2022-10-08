@@ -29,16 +29,33 @@ jobs:
       - name: install debootstrap
         run: |
           sudo apt-get update
-          sudo apt-get -y install debootstrap qemu-user-static
+          sudo apt-get -y install apt-get install -y qemu qemu-user qemu-user-static binfmt-support \
+          debootstrap binutils
 
       # Runs a set of commands using the runners shell
       - name: build chroot
         run: |
-          mkdir chroot-armhf
-          sudo debootstrap --no-check-gpg --arch=armhf --variant=buildd focal chroot-armhf http://ports.ubuntu.com/ubuntu-ports
-          sudo mount -t proc /proc chroot-armhf/proc
-          sudo mount --rbind /sys chroot-armhf/sys
-          sudo mount --rbind /dev chroot-armhf/dev
-          sudo chroot chroot-armhf /debootstrap/debootstrap --second-stage
-          sudo chroot chroot-armhf /bin/bash
-          ls
+          [[ "$1" != "" ]] && debootstrap --no-check-gpg --foreign --arch armhf "$1" /armhf http://ports.ubuntu.com/ubuntu-ports || debootstrap --no-check-gpg --foreign --arch armhf focal /armhf http://ports.ubuntu.com/ubuntu-ports 
+          mkdir -p /amd64/main_storage
+          cat <<EOF > /usr/bin/setup_amd64
+          #!/bin/bash \
+          mount -t sysfs sys /amd64/sys/ \
+          mount -t proc proc /amd64/proc/ \
+          mount --bind /dev /amd64/dev/ \
+          mount --bind /dev/pts /amd64/dev/pts/ \
+          mount --bind /dev/shm /amd64/dev/shm/ \
+          mount --bind / /amd64/main_storage \
+          EOF
+          chmod 755 /usr/bin/setup_amd64
+          cat <<EOF > /etc/systemd/system/setup_amd64.service \
+          [Unit] \
+          Description=Service to setup amd64 chroot environment \
+          \
+          [Service] \
+          Type=oneshot \
+          ExecStart=/usr/bin/setup_amd64 \
+          \
+          [Install] \
+          WantedBy=multi-user.target \
+          EOF
+
