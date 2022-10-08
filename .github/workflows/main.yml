@@ -37,7 +37,7 @@ jobs:
         run: |
           [[ "$1" != "" ]] && sudo debootstrap --no-check-gpg --foreign --arch armhf "$1" /armhf http://ports.ubuntu.com/ubuntu-ports || sudo debootstrap --no-check-gpg --foreign --arch armhf focal /armhf http://ports.ubuntu.com/ubuntu-ports 
           sudo mkdir -p /armhf/main_storage
-          mv $GITHUB_WORKSPACE/setup_amd64 /usr/bin
+          mv $GITHUB_WORKSPACE/setup_armhf /usr/bin
           mv $GITHUB_WORKSPACE/setup_armhf.service /etc/systemd/system/
           systemctl start setup_armhf
           sudo cp -r /usr/bin/arm-static /amd64/usr/bin/qemu-armhf-static
