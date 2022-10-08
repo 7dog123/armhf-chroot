@@ -36,25 +36,27 @@ jobs:
       - name: build chroot
         run: |
           [[ "$1" != "" ]] && sudo debootstrap --no-check-gpg --foreign --arch armhf "$1" /armhf http://ports.ubuntu.com/ubuntu-ports || sudo debootstrap --no-check-gpg --foreign --arch armhf focal /armhf http://ports.ubuntu.com/ubuntu-ports 
-          sudo mkdir -p /amd64/main_storage
-          sudo cat <<EOF > /usr/bin/setup_amd64
+          sudo mkdir -p /armhf/main_storage
+          cat <<EOF > setup_armhf
           #!/bin/bash \
-          sudo mount -t sysfs sys /amd64/sys/ \
-          sudo mount -t proc proc /amd64/proc/ \
-          sudo mount --bind /dev /amd64/dev/ \
-          sudo mount --bind /dev/pts /amd64/dev/pts/ \
-          sudo mount --bind /dev/shm /amd64/dev/shm/ \
-          sudo mount --bind / /amd64/main_storage
+          sudo mount -t sysfs sys /armhf/sys/ \
+          sudo mount -t proc proc /armhf/proc/ \
+          sudo mount --bind /dev /armhf/dev/ \
+          sudo mount --bind /dev/pts /armhf/dev/pts/ \
+          sudo mount --bind /dev/shm /armhf dev/shm/ \
+          sudo mount --bind / /armhf/main_storage
           EOF
-          sudo chmod 755 /usr/bin/setup_amd64
-          sudo cat <<EOF > /etc/systemd/system/setup_amd64.service \
+          chmod 755 setup_armhf
+          mv setup_amd64 /usr/bin
+          cat <<EOF > setup_armhf.service
           [Unit] \
-          Description=Service to setup amd64 chroot environment \
+          Description=Service to setup armhf chroot environment \
           \
           [Service] \
           Type=oneshot \
-          ExecStart=/usr/bin/setup_amd64 \
+          ExecStart=/usr/bin/setup_armhf \
           \
           [Install] \
           WantedBy=multi-user.target
           EOF
+          mv setup_armhf.service /etc/systemd/system/
